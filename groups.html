@@ -70,7 +70,7 @@
 		      <p id="confirmmessage"></p>
 	      </div>
 	      <div class="modal-footer">
-		<button type="button" class="btn btn-primary" id="deletegroup">Delete</button>
+		<button type="button" class="btn btn-primary" id="deletegroup">Leave</button>
 		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 	      </div>
 	    </div>
@@ -88,8 +88,9 @@
         </div>
 	      <div class="modal-body">
               <p id="addmessage"></p> 
-		      <input class="form-control" type="text" id="email" placeholder="Email">
+		      <input class="form-control" type="email" id="newmemberemail" placeholder="Email" required>
 	      <div class="modal-footer">
+		<button type="submit" class="btn btn-primary" id="addmember">Add</button>
 		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 	      </div>
 	    </div>
@@ -103,10 +104,10 @@
 </body>
 
 <script>
-    $("#nav-placeholder").load("nav.html")
+    $("#nav-placeholder").load("nav.html");
 
-    var data = {"groups": [{"id" : 1, "name": "testtest"}, {"id": 2, "name": "test2"}]}
-    updateList(data)
+    var data = {"groups": [{"id" : 1, "name": "testtest"}, {"id": 2, "name": "test2"}]};
+    updateList(data);
 
 	function listitemHTML(name, groupid) {
 		
@@ -151,6 +152,14 @@
 		}
 	}
 
+	$("body").on("click", "[name='grouptext']", function() {
+		var groupid = $(this).parent().attr("data-groupid");
+		var groupname = $(this).parent().attr("data-groupname");
+		localStorage.setItem("groupid", groupid);
+		localStorage.setItem("groupname", groupname);
+		location.href = "balances.html";
+	});
+
 	$("body").on("click", "[name='deletebutton']", function(e) {
 		var groupname = $(this).parent().parent().attr("data-groupname");
 		var groupid = $(this).parent().parent().attr("data-groupid");
@@ -165,6 +174,7 @@
         $("#addmessage").html("Add user to the group '" + groupname + "' with email address")
 		$("#addmemberdialog").modal("show");
 	});
+
 
 
 </script>

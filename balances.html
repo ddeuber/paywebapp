@@ -13,9 +13,6 @@
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Use Fontawesome for icons -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-
 
 </head>
 
@@ -28,6 +25,14 @@
   <!-- Page Content# -->
   <div class="container">
   <br>
+  <h3></h3>
+  <br>
+  <div class="form-row">
+      <button type="button" class="btn btn-primary" id="addtransaction">Add Transaction</button>
+            &nbsp; 
+            &nbsp; 
+      <button type="button" class="btn btn-primary" id="viewtransactions">View All Transactions</button>
+  </div>
   <br>
 
   <table class="table table-hover">
@@ -39,26 +44,7 @@
         <th>Credit</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <td>Toni</td>
-        <td>123</td>
-        <td>321</td>
-        <td>124</td>
-      </tr>
-      <tr>
-        <td>Adrian</td>
-        <td>123</td>
-        <td>321</td>
-        <td>124</td>
-      </tr>
-      <tr>
-        <td>Matthias</td>
-        <td>123</td>
-        <td>321</td>
-        <td>124</td>
-      </tr>
-    </tbody>
+    <tbody id="tablebody">
   </table>
 
   </div>
@@ -70,51 +56,36 @@
 </body>
 
 <script>
-    $("#nav-placeholder").load("nav.html")
+  $("#nav-placeholder").load("nav.html");
+  $("h3").text(localStorage.getItem("groupname"))
 
-    var data = {"groups": [{"id" : 1, "name": "testtest"}, {"id": 2, "name": "test2"}]}
-    updateList(data)
+  console.log(localStorage.getItem("groupid"))
 
-	function listitemhtml(name, groupid) {
-		
-		var txt1 = `
-			<li class="list-group-item d-flex justify-content-center py-1" style="cursor:pointer" `;
-		var txt11 = `
-			" data-groupid="`;
-		var txt12 = `
-			" data-groupname="`;
-		var txt2 = `
-			">
-			</div>
-			<div class="col-10 col-sm-10" name="grouptext">
-			    <p class="p-2 m-0 flex-grow-1" name="itemtext">`;
-		var txt3 = `
-			</p>
-			</div>
-			<div class="col-1 col-sm-1">
-			     <button class="btn btn-default" name="addmemberbutton">
-                 <i class="fas fa-user-plus"></i>
-			     </button>
-			</div>
-			<div class="col-1 col-sm-1">
-			     <button class="btn btn-default" name="deletebutton">
-                 <i class="fas fa-trash-alt"></i>
-                 </button>
-			</div>
-		    </li>`;
+  var data = {'Toni': {'spent': 10, 'owes': 20, 'credit':-10}, 'Mä': {'spent': 20, 'owes': 40, 'credit':20}};
+  updateTable(data);
 
-		return txt1 + txt11 + groupid + txt12 + name + txt2 + name + txt3;
+	function tableInnerHTML(name, spent, owes, credit) {
+    var htmlText = `<tr style="cursor:pointer;" name="` + name + `"><td>` + name;
+    var cellTagGreen = `</td><td class="text-success">`;
+    var cellTagRed = `</td><td class="text-danger">`;
+    var rowEnd = `</td></tr>`;
+
+    balances = [spent, owes, credit];
+    for (var b of balances){
+      if (b >=0)
+        htmlText += cellTagGreen + b;
+      else
+        htmlText += cellTagRed + b;
+    }
+    htmlText += rowEnd;
+
+		return htmlText;
 	}
 
-	function updatelist(data){
-		$(".list-group-item").remove();
-		var groups = object.values(data["groups"]);
-		var name;
-		var groupid;
-		for (var i in groups) {
-			name = groups[i]["name"];
-			groupid = groups[i]["id"];
-			$("#list").append(listitemhtml(name, groupid));
+	function updateTable(data){
+		for (var participant in data) {
+      balance = data[participant];
+			$("#tablebody").append(tableInnerHTML(participant, balance['spent'], balance['owes'], balance['credit'])); 
 		}
 	}
 
@@ -126,12 +97,13 @@
 		$("#deletedialog").modal("show");
 	});
 
-	$("body").on("click", "[name='addmemberbutton']", function(e) {
-		var groupname = $(this).parent().parent().attr("data-groupname");
-		var groupid = $(this).parent().parent().attr("data-groupid");
-        $("#addmessage").html("add user to the group '" + groupname + "' with email address")
-		$("#addmemberdialog").modal("show");
-	});
+	$("body").on("click", "tr", function(e) {
+		var name = $(this).attr("name");
+  });
+  
+  $("#addtransaction").on("click", function(e) {
+    location.href = "addtransaction.html"
+  })
 
 
 </script>
