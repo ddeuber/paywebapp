@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>PayApp - Balances</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Use Fontawesome for icons -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <div id="nav-placeholder"></div>
+
+
+  <!-- Page Content# -->
+  <div class="container">
+  <br>
+  <br>
+
+  <table class="table table-hover">
+    <thead class="thead-light">
+      <tr>
+        <th>Name</th>
+        <th>Spent</th>
+        <th>Owes</th>
+        <th>Credit</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Toni</td>
+        <td>123</td>
+        <td>321</td>
+        <td>124</td>
+      </tr>
+      <tr>
+        <td>Adrian</td>
+        <td>123</td>
+        <td>321</td>
+        <td>124</td>
+      </tr>
+      <tr>
+        <td>Matthias</td>
+        <td>123</td>
+        <td>321</td>
+        <td>124</td>
+      </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+<script>
+    $("#nav-placeholder").load("nav.html")
+
+    var data = {"groups": [{"id" : 1, "name": "testtest"}, {"id": 2, "name": "test2"}]}
+    updateList(data)
+
+	function listitemhtml(name, groupid) {
+		
+		var txt1 = `
+			<li class="list-group-item d-flex justify-content-center py-1" style="cursor:pointer" `;
+		var txt11 = `
+			" data-groupid="`;
+		var txt12 = `
+			" data-groupname="`;
+		var txt2 = `
+			">
+			</div>
+			<div class="col-10 col-sm-10" name="grouptext">
+			    <p class="p-2 m-0 flex-grow-1" name="itemtext">`;
+		var txt3 = `
+			</p>
+			</div>
+			<div class="col-1 col-sm-1">
+			     <button class="btn btn-default" name="addmemberbutton">
+                 <i class="fas fa-user-plus"></i>
+			     </button>
+			</div>
+			<div class="col-1 col-sm-1">
+			     <button class="btn btn-default" name="deletebutton">
+                 <i class="fas fa-trash-alt"></i>
+                 </button>
+			</div>
+		    </li>`;
+
+		return txt1 + txt11 + groupid + txt12 + name + txt2 + name + txt3;
+	}
+
+	function updatelist(data){
+		$(".list-group-item").remove();
+		var groups = object.values(data["groups"]);
+		var name;
+		var groupid;
+		for (var i in groups) {
+			name = groups[i]["name"];
+			groupid = groups[i]["id"];
+			$("#list").append(listitemhtml(name, groupid));
+		}
+	}
+
+	$("body").on("click", "[name='deletebutton']", function(e) {
+		var groupname = $(this).parent().parent().attr("data-groupname");
+		var groupid = $(this).parent().parent().attr("data-groupid");
+		$("#confirmmessage").attr("data-groupid", groupid);
+		$("#confirmmessage").html("are you sure you want to leave the group '" + groupname + "'?");
+		$("#deletedialog").modal("show");
+	});
+
+	$("body").on("click", "[name='addmemberbutton']", function(e) {
+		var groupname = $(this).parent().parent().attr("data-groupname");
+		var groupid = $(this).parent().parent().attr("data-groupid");
+        $("#addmessage").html("add user to the group '" + groupname + "' with email address")
+		$("#addmemberdialog").modal("show");
+	});
+
+
+</script>
+
+</html>
