@@ -23,7 +23,8 @@
 
 
   <!-- Use Fontawesome for icons -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+    integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
 
   <!-- Page Content# -->
@@ -37,96 +38,152 @@
         <input type="text" class="form-control" id="inputTitle" placeholder="Enter title" required>
       </div>
       <div class="form-group">
-        <label for="inputAmount">Amount</label>
-        <input type="number" step="0.05" class="form-control" id="inputAmount" placeholder="Enter Amount" required>
+        <label for="inputpmount">Amount</label>
+        <input type="number" step="0.05" class="form-control" id="inputpmount" placeholder="Enter Amount" required>
       </div>
       <div class="form-group">
-        <label for="inputPayer">Payer</label>
-        <select id="inputPayer" class="form-control">
-          <option>Toni</option>
-          <option>Mä</option>
+        <label for="inputpayer">Payer</label>
+        <select id="inputpayer" class="form-control">
         </select>
       </div>
       <div class="form-group">
         <label for="participantlist">Participants
-            &nbsp; 
-            <i class="fas fa-plus-circle" style="cursor:pointer"></i>
+          &nbsp;
+          <i class="fas fa-plus-circle" style="cursor:pointer" id="addparticipant"></i>
         </label>
         <ul class="list-group list-group-flush" id="participantlist">
-          <li class="list-group-item">        
-            <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="participant1">
-            <label class="form-check-label" for="participant1">Toni</label>
-            </div>
-          </li>
-          <li class="list-group-item">
-            <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="participant2">
-            <label class="form-check-label" for="participant2">Mä</label>
-            </div>
-          </li>
-          <li class="list-group-item">
-            <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="participant2">
-            <label class="form-check-label" for="participant2">Mä</label>
-            </div>
-          </li>
         </ul>
       </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" id="submittransaction" class="btn btn-primary">Submit</button>
     </form>
   </div>
 
-  <!-- Bootstrap core JavaScript -->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <div class="modal" tabindex="-2" role="dialog" id="addparticipantdialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add New Participant</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="namemessage">Enter the name of the new participant</p>
+          <input class="form-control" type="text" id="newparticipantname" placeholder="Name" required>
+          <p id="errormessage" class="text-danger">Participant already exists. Please choose another name.</p>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" id="addparticipantbutton">Add</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="modal" tabindex="-2" role="dialog" id="noparticipantdialog">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">No Participants Selected</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Please select a participant.</p>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
 <script>
   $("#nav-placeholder").load("nav.html");
 
-  console.log(localStorage.getItem("groupid"))
+  var participants = ["Toni", "Mä", "Adrian"];
+  updateParticipants();
 
-  var data = {'Toni': {'spent': 10, 'owes': 20, 'credit':-10}, 'Mä': {'spent': 20, 'owes': 40, 'credit':20}};
-  updateTable(data);
+  // Set payer to last known payer
+  var lastPayer = localStorage.getItem("lastPayer");
+  var index = participants.indexOf(lastPayer);
+  if (index > -1){
+    $("select").children().eq(index).attr("selected", true);
+  }
 
-	function tableInnerHTML(name, spent, owes, credit) {
-    var htmlText = `<tr style="cursor:pointer;" name="` + name + `"><td>` + name;
-    var cellTagGreen = `</td><td class="text-success">`;
-    var cellTagRed = `</td><td class="text-danger">`;
-    var rowEnd = `</td></tr>`;
+  function optionInnerHTML(participant) {
+    var openTag = `<option>`;
+    var closeTag = `</option>`;
+    return openTag + participant + closeTag;
+  }
 
-    balances = [spent, owes, credit];
-    for (var b of balances){
-      if (b >=0)
-        htmlText += cellTagGreen + b;
-      else
-        htmlText += cellTagRed + b;
+  function listInnerHTML(participant) {
+    var part1 = `<li class="list-group-item">
+            <div class="form-check">
+            <label class="form-check-label">
+            <input type="checkbox" class="form-check-input">`
+    var part2 = `</label></div></li>`
+    return part1 + participant + part2;
+  }
+
+  function updateParticipants() {
+    $(".list-group-item").remove()
+    $("option").remove()
+    for (var p of participants) {
+      $("#inputpayer").append(optionInnerHTML(p));
+      $("#participantlist").append(listInnerHTML(p));
     }
-    htmlText += rowEnd;
+  }
 
-		return htmlText;
-	}
+  function getSelectedParticipants() {
+    selected = [];
+    $(".form-check-input").each(function(index, obj) {
+        if (obj.checked){
+          selected.push(participants[index]);
+        }
+    });
+    return selected;
+  }
 
-	function updateTable(data){
-		for (var participant in data) {
-      balance = data[participant];
-			$("#tablebody").append(tableInnerHTML(participant, balance['spent'], balance['owes'], balance['credit'])); 
-		}
-	}
+  $("#addparticipant").on("click", function (e) {
+    $("#errormessage").hide();
+    $("#addparticipantdialog").modal("show");
+  });
 
-	$("body").on("click", "[name='deletebutton']", function(e) {
-		var groupname = $(this).parent().parent().attr("data-groupname");
-		var groupid = $(this).parent().parent().attr("data-groupid");
-		$("#confirmmessage").attr("data-groupid", groupid);
-		$("#confirmmessage").html("are you sure you want to leave the group '" + groupname + "'?");
-		$("#deletedialog").modal("show");
-	});
+  $("#addparticipantbutton").on("click", function (e) {
+    var newParticipant = $("#newparticipantname").val();;
+    if (participants.indexOf(newParticipant) > -1) {
+      $("#errormessage").show();
+    } else {
+      participants.push(newParticipant);
+      updateParticipants(participants);
+      $("#addparticipantdialog").modal("hide");
+    }
+  });
 
-	$("body").on("click", "tr", function(e) {
-		var name = $(this).attr("name");
-	});
+  $("form").on("submit", function (e) {
+    e.preventDefault();
+  });
+
+
+  $("#submittransaction").on("click", function (e) {
+    var selectedParticipants = getSelectedParticipants();
+    if (selectedParticipants.length == 0) {
+      $("#noparticipantdialog").modal("show");
+      return;
+    }
+    localStorage.setItem("lastPayer", $("#inputpayer option:selected").text());
+
+  });
 
 
 </script>

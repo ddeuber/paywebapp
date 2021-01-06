@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>PayApp - View Transactions</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <div id="nav-placeholder"></div>
+
+
+  <!-- Page Content# -->
+  <div class="container">
+  <br>
+  <h3>Transactions</h3> 
+  <div class="btn-group btn-group-toggle" data-toggle="buttons">
+    <label class="btn btn-primary .active" id="btnlabel1">
+    <input type="checkbox"  id="btncheck1" autocomplete="off" checked>
+    </label>
+
+    <label class="btn btn-primary" id="btnlabel2">
+    <input type="checkbox" id="btncheck2" autocomplete="off">
+    </label>
+  </div>
+  <br>
+  <br>
+
+  <table class="table table-hover">
+    <thead class="thead-light">
+      <tr>
+        <th>Payer</th>
+        <th>Amount</th>
+        <th>Comment</th>
+      </tr>
+    </thead>
+    <tbody id="tablebody">
+  </table>
+
+  </div>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+<script>
+  $("#nav-placeholder").load("nav.html");
+
+  var participantName = sessionStorage.getItem("participant");
+  if (participantName !== null){
+    $("#btnlabel1").append("Paid by " + participantName);
+    $("#btnlabel2").append(participantName + " involved");
+  } else {
+    $(".btn-group").remove();
+  }
+
+  var data = [{"payer": "Mä", "comment": "coop", "amount":30}, {"payer": "Mä", "amount": 40, "comment": "fleisch"}];
+  updateTable(data);
+
+	function tableInnerHTML(name, comment, amount) {
+    var htmlText = `<tr style="cursor:pointer;"><td>` + name;
+    var cellTag= `</td><td>`;
+    var rowEnd = `</td></tr>`;
+
+		return htmlText + cellTag + amount + cellTag + comment + rowEnd;
+	}
+
+	function updateTable(){
+		for (var i=0; i<data.length; ++i) {
+			$("#tablebody").append(tableInnerHTML(data[i]["payer"], data[i]["comment"], data[i]["amount"]));
+		}
+	}
+
+	$("body").on("click", "[name='deletebutton']", function(e) {
+		var groupname = $(this).parent().parent().attr("data-groupname");
+		var groupid = $(this).parent().parent().attr("data-groupid");
+		$("#confirmmessage").attr("data-groupid", groupid);
+		$("#confirmmessage").html("are you sure you want to leave the group '" + groupname + "'?");
+		$("#deletedialog").modal("show");
+	});
+
+	$("body").on("click", "tr", function(e) {
+    var index = $(this).index(); 
+    console.log(index)
+  });
+  
+  $("#addtransaction").on("click", function(e) {
+    console.log("bl")
+    location.href = "addtransaction.html"
+  });
+
+  $("#btncheck1").on("click", function(e){
+    console.log($(this).prop("checked"))
+  });
+
+  $("#btncheck2").on("click", function(e){
+
+  });
+
+</script>
+
+</html>

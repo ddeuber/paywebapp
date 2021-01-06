@@ -65,7 +65,7 @@
   updateTable(data);
 
 	function tableInnerHTML(name, spent, owes, credit) {
-    var htmlText = `<tr style="cursor:pointer;" name="` + name + `"><td>` + name;
+    var htmlText = `<tr style="cursor:pointer;"><td>` + name;
     var cellTagGreen = `</td><td class="text-success">`;
     var cellTagRed = `</td><td class="text-danger">`;
     var rowEnd = `</td></tr>`;
@@ -89,21 +89,21 @@
 		}
 	}
 
-	$("body").on("click", "[name='deletebutton']", function(e) {
-		var groupname = $(this).parent().parent().attr("data-groupname");
-		var groupid = $(this).parent().parent().attr("data-groupid");
-		$("#confirmmessage").attr("data-groupid", groupid);
-		$("#confirmmessage").html("are you sure you want to leave the group '" + groupname + "'?");
-		$("#deletedialog").modal("show");
-	});
-
-	$("body").on("click", "tr", function(e) {
-		var name = $(this).attr("name");
+	$("body").on("click", "tr", function(e){
+    var index = $(this).index();
+    keys = Object.keys(data);
+    sessionStorage.setItem("participant", keys[index]);
+    location.href = "viewtransactions.html";
   });
   
-  $("#addtransaction").on("click", function(e) {
-    location.href = "addtransaction.html"
-  })
+  $("#addtransaction").on("click", function(e){
+    location.href = "addtransaction.html";
+  });
+  
+  $("#viewtransactions").on("click", function(e){
+    sessionStorage.removeItem("participant");
+    location.href = "viewtransactions.html";
+  });
 
 
 </script>

@@ -152,6 +152,7 @@
 		}
 	}
 
+	// TODO: change to $(this).index() in order to find group
 	$("body").on("click", "[name='grouptext']", function() {
 		var groupid = $(this).parent().attr("data-groupid");
 		var groupname = $(this).parent().attr("data-groupname");
@@ -160,6 +161,7 @@
 		location.href = "balances.html";
 	});
 
+	// TODO: change to $(this).index() in order to find group
 	$("body").on("click", "[name='deletebutton']", function(e) {
 		var groupname = $(this).parent().parent().attr("data-groupname");
 		var groupid = $(this).parent().parent().attr("data-groupid");
@@ -168,6 +170,7 @@
 		$("#deletedialog").modal("show");
 	});
 
+	// TODO: change to $(this).index() in order to find group
 	$("body").on("click", "[name='addmemberbutton']", function(e) {
 		var groupname = $(this).parent().parent().attr("data-groupname");
 		var groupid = $(this).parent().parent().attr("data-groupid");
