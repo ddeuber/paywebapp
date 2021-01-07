@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>PayApp - Signup</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary static-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">PayApp</a>
+    </div>
+  </nav>
+
+
+  <!-- Page Content# -->
+  <div class="container" style="max-width: 400px;">
+    <br>
+    <br>
+    <br>
+    <h3>Sign Up</h3>
+    <br>
+    <form>
+      <div class="form-group">
+        <label for="inputemail">Email</label>
+        <input type="email" class="form-control" id="inputemail" placeholder="Enter email" required>
+      </div>
+      <div class="form-group">
+        <label for="inputpmount">Password</label>
+        <input type="password" class="form-control" id="inputnewpassword" placeholder="Enter password" required>
+      </div>
+      <br>
+      <button type="submit" id="submitchange" class="btn btn-primary">Sign Up</button>
+    </form>
+  </div>
+
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+  $("#nav-placeholder").load("nav.html");
+
+  $("form").on("submit", function (e) {
+    e.preventDefault();
+  });
+
+  $("#submitchange").on("click", function (e) {
+    var email = localStorage.getItem("email");
+
+  });
+
+</script>
+
+</body>
+
+</html>

@@ -28,14 +28,14 @@
 
 
   <!-- Page Content# -->
-  <div class="container">
+  <div class="container" style="max-width: 800px;">
     <br>
     <h3>New Transaction</h3>
     <br>
     <form>
       <div class="form-group">
-        <label for="inputTitle">Title</label>
-        <input type="text" class="form-control" id="inputTitle" placeholder="Enter title" required>
+        <label for="inputtitle">Title</label>
+        <input type="text" class="form-control" id="inputtitle" placeholder="Enter title" required>
       </div>
       <div class="form-group">
         <label for="inputpmount">Amount</label>
@@ -105,7 +105,6 @@
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-</body>
 
 <script>
   $("#nav-placeholder").load("nav.html");
@@ -120,27 +119,36 @@
     $("select").children().eq(index).attr("selected", true);
   }
 
-  function optionInnerHTML(participant) {
-    var openTag = `<option>`;
-    var closeTag = `</option>`;
-    return openTag + participant + closeTag;
+  function optionTag(participant) {
+    var option = $("<option>");
+    option.text(participant);
+    return option;
   }
 
-  function listInnerHTML(participant) {
-    var part1 = `<li class="list-group-item">
-            <div class="form-check">
-            <label class="form-check-label">
-            <input type="checkbox" class="form-check-input">`
-    var part2 = `</label></div></li>`
-    return part1 + participant + part2;
+  function listItem(participant) {
+    var item = $("<li>");
+    item.attr("class", "list-group-item");
+    var formdiv = $("<div>");
+    formdiv.attr("class", "form-check");
+    var label = $("<label>");
+    label.attr("class", "form-check-label");
+    var checkbox = $("<input>");
+    checkbox.attr("type", "checkbox");
+    checkbox.attr("class", "form-check-input");
+
+    label.text(participant);
+    label.prepend(checkbox);
+    formdiv.append(label);
+    item.append(formdiv);
+    return item;
   }
 
   function updateParticipants() {
     $(".list-group-item").remove()
     $("option").remove()
     for (var p of participants) {
-      $("#inputpayer").append(optionInnerHTML(p));
-      $("#participantlist").append(listInnerHTML(p));
+      $("#inputpayer").append(optionTag(p));
+      $("#participantlist").append(listItem(p));
     }
   }
 
@@ -188,4 +196,5 @@
 
 </script>
 
+</body>
 </html>

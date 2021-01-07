@@ -23,7 +23,7 @@
 
 
   <!-- Page Content# -->
-  <div class="container">
+  <div class="container" style="max-width: 800px;">
   <br>
   <h3>Transactions</h3> 
   <div class="btn-group btn-group-toggle" data-toggle="buttons">
@@ -43,7 +43,7 @@
       <tr>
         <th>Payer</th>
         <th>Amount</th>
-        <th>Comment</th>
+        <th>Title</th>
       </tr>
     </thead>
     <tbody id="tablebody">
@@ -55,7 +55,6 @@
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-</body>
 
 <script>
   $("#nav-placeholder").load("nav.html");
@@ -68,20 +67,33 @@
     $(".btn-group").remove();
   }
 
-  var data = [{"payer": "Mä", "comment": "coop", "amount":30}, {"payer": "Mä", "amount": 40, "comment": "fleisch"}];
+  var data = [{"payer": "<b>Mä</b>", "comment": "coop und voi blablalb", "amount":30, "timestamp": 1604346680629, "involved": ["Toni", "Mä"]}, {"payer": "Mä", "amount": 40, "comment": "fleisch", "timestamp": 1604346680629, "involved": ["Toni", "Adrian"]}];
   updateTable(data);
 
-	function tableInnerHTML(name, comment, amount) {
+	function tableRow(name, comment, amount) {
     var htmlText = `<tr style="cursor:pointer;"><td>` + name;
     var cellTag= `</td><td>`;
     var rowEnd = `</td></tr>`;
 
-		return htmlText + cellTag + amount + cellTag + comment + rowEnd;
+    var nameentry = $("<td>");
+    nameentry.text(name);
+    var amountentry = $("<td>");
+    amountentry.text(amount);
+    var titleentry = $("<td>");
+    titleentry.text(comment);
+    
+    var row = $("<tr>");
+    row.attr("style", "cursor:pointer;");
+    row.append(nameentry);
+    row.append(amountentry);
+    row.append(titleentry);
+    
+		return row;
 	}
 
 	function updateTable(){
 		for (var i=0; i<data.length; ++i) {
-			$("#tablebody").append(tableInnerHTML(data[i]["payer"], data[i]["comment"], data[i]["amount"]));
+			$("#tablebody").append(tableRow(data[i]["payer"], data[i]["comment"], data[i]["amount"]));
 		}
 	}
 
@@ -95,16 +107,16 @@
 
 	$("body").on("click", "tr", function(e) {
     var index = $(this).index(); 
-    console.log(index)
+    sessionStorage.setItem("transaction", JSON.stringify(data[index]));
+    location.href = "transactiondetails.html"
   });
   
   $("#addtransaction").on("click", function(e) {
-    console.log("bl")
-    location.href = "addtransaction.html"
+    location.href = "addtransaction.html";
   });
 
   $("#btncheck1").on("click", function(e){
-    console.log($(this).prop("checked"))
+    console.log($(this).prop("checked"));
   });
 
   $("#btncheck2").on("click", function(e){
@@ -113,4 +125,5 @@
 
 </script>
 
+</body>
 </html>

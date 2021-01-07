@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>PayApp - Transaction Info</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <div id="nav-placeholder"></div>
+
+
+  <!-- Page Content# -->
+  <div class="container" style="max-width: 800px;">
+  <br>
+  <h3>Transaction Info</h3>
+  <br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-4 font-weight-bold">
+        Title:
+      </div>
+      <div class="col-8" id="transactiontitle">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-4 font-weight-bold">
+        Amount:
+      </div>
+      <div class="col-8" id="transactionamount">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-4 font-weight-bold">
+        Payer:
+      </div>
+      <div class="col-8" id="transactionpayer">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-4 font-weight-bold">
+        Creation date:
+      </div>
+      <div class="col-8" id="transactioncreationdate">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-4 font-weight-bold">
+        Creation time:
+      </div>
+      <div class="col-8" id="transactioncreationtime">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-4 font-weight-bold">
+        Involved:
+      </div>
+        <ul id="transactioninvolved">
+        </ul>
+    </div>
+  </div>
+
+
+  </div>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+  $("#nav-placeholder").load("nav.html");
+
+  var transaction = JSON.parse(sessionStorage.getItem("transaction"));
+  $("#transactiontitle").text(transaction["comment"]);
+  $("#transactionamount").text(transaction["amount"].toFixed(2));
+  $("#transactionpayer").text(transaction["payer"]);
+  var creationTimestamp = transaction["timestamp"];
+  var date = new Date(creationTimestamp);
+  $("#transactioncreationdate").text(date.toLocaleDateString("de-CH"));
+  $("#transactioncreationtime").text(date.toLocaleTimeString("de-CH"));
+  for (var involved of transaction["involved"]){
+    var listitem = $("<li>");
+    listitem.text(involved);
+    $("#transactioninvolved").append(listitem);
+  }
+
+</script>
+
+</body>
+
+</html>

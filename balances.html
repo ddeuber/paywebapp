@@ -23,7 +23,7 @@
 
 
   <!-- Page Content# -->
-  <div class="container">
+  <div class="container" style="max-width: 800px;">
   <br>
   <h3></h3>
   <br>
@@ -53,7 +53,6 @@
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-</body>
 
 <script>
   $("#nav-placeholder").load("nav.html");
@@ -64,28 +63,31 @@
   var data = {'Toni': {'spent': 10, 'owes': 20, 'credit':-10}, 'Mä': {'spent': 20, 'owes': 40, 'credit':20}};
   updateTable(data);
 
-	function tableInnerHTML(name, spent, owes, credit) {
-    var htmlText = `<tr style="cursor:pointer;"><td>` + name;
-    var cellTagGreen = `</td><td class="text-success">`;
-    var cellTagRed = `</td><td class="text-danger">`;
-    var rowEnd = `</td></tr>`;
+	function tableRow(name, spent, owes, credit) {
+    var row = $("<tr>", {"style": "cursor:pointer;"});
+    row.attr("style", "cursor:pointer;");
+    var entry = $("<td>");
+    entry.text(name);
+    row.append(entry);
 
     balances = [spent, owes, credit];
     for (var b of balances){
+      entry = $("<td>");
       if (b >=0)
-        htmlText += cellTagGreen + b;
+        entry.attr("class", "text-success");
       else
-        htmlText += cellTagRed + b;
+        entry.attr("class", "text-danger");
+      entry.text(b);
+      row.append(entry);
     }
-    htmlText += rowEnd;
 
-		return htmlText;
+		return row;
 	}
 
 	function updateTable(data){
 		for (var participant in data) {
       balance = data[participant];
-			$("#tablebody").append(tableInnerHTML(participant, balance['spent'], balance['owes'], balance['credit'])); 
+			$("#tablebody").append(tableRow(participant, balance['spent'], balance['owes'], balance['credit'])); 
 		}
 	}
 
@@ -108,4 +110,5 @@
 
 </script>
 
+</body>
 </html>

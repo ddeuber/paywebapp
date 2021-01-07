@@ -26,8 +26,9 @@
 
 
   <!-- Page Content# -->
-  <div class="container">
-
+  <div class="container" style="max-width: 800px;">
+  <br>
+  <h3>Groups</h3>
   <br>
       <button type="button" class="btn btn-primary" id="create" data-toggle="modal" data-target="#createdialog">Create Group</button>
   <br>
@@ -101,43 +102,50 @@
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-</body>
 
 <script>
-    $("#nav-placeholder").load("nav.html");
+	$("#nav-placeholder").load("nav.html");
 
     var data = {"groups": [{"id" : 1, "name": "testtest"}, {"id": 2, "name": "test2"}]};
     updateList(data);
 
-	function listitemHTML(name, groupid) {
-		
-		var txt1 = `
-			<li class="list-group-item d-flex justify-content-center py-1" style="cursor:pointer" `;
-		var txt11 = `
-			" data-groupid="`;
-		var txt12 = `
-			" data-groupname="`;
-		var txt2 = `
-			">
-			</div>
-			<div class="col-10 col-sm-10" name="grouptext">
-			    <p class="p-2 m-0 flex-grow-1" name="itemtext">`;
-		var txt3 = `
-			</p>
-			</div>
-			<div class="col-1 col-sm-1">
-			     <button class="btn btn-default" name="addmemberbutton">
-                 <i class="fas fa-user-plus"></i>
-			     </button>
-			</div>
-			<div class="col-1 col-sm-1">
-			     <button class="btn btn-default" name="deletebutton">
-                 <i class="fas fa-trash-alt"></i>
-                 </button>
-			</div>
-		    </li>`;
+	function listItem(name) {
+		var nameentry = $("<p>");
+		nameentry.attr("class", "p-2 m-0 flex-grow-1");
+		nameentry.text(name);
+		var namecol = $("<div>");
+		namecol.attr("class", "col-10 col-sm-10");
+		namecol.attr("name", "grouptext");
+		namecol.append(nameentry);
 
-		return txt1 + txt11 + groupid + txt12 + name + txt2 + name + txt3;
+		var addicon = $("<i>");
+        addicon.attr("class", "fas fa-user-plus");
+		var addbutton = $("<button>");
+        addbutton.attr("class", "btn btn-default");
+		addbutton.attr("name", "addmemberbutton");
+		addbutton.append(addicon);
+		var addcol = $("<div>"); 
+		addcol.attr("class", "col-1");
+		addcol.append(addbutton);
+
+		var deleteicon = $("<i>");
+        deleteicon.attr("class", "fas fa-trash-alt");
+		var deletebutton = $("<button>");
+        deletebutton.attr("class", "btn btn-default");
+		deletebutton.attr("name", "deletebutton");
+		deletebutton.append(deleteicon);
+		var deletecol = $("<div>"); 
+		deletecol.attr("class", "col-1");
+		deletecol.append(deletebutton);
+        
+		var row = $("<li>");
+		row.attr("class", "list-group-item d-flex justify-content-center py-1");
+		row.attr("style", "cursor:pointer");
+		row.append(namecol);
+		row.append(addcol);
+		row.append(deletecol);
+
+		return row; 
 	}
 
 	function updateList(data){
@@ -148,23 +156,24 @@
 		for (var i in groups) {
 			name = groups[i]["name"];
 			groupid = groups[i]["id"];
-			$("#list").append(listitemHTML(name, groupid));
+			$("#list").append(listItem(name));
 		}
 	}
 
-	// TODO: change to $(this).index() in order to find group
 	$("body").on("click", "[name='grouptext']", function() {
-		var groupid = $(this).parent().attr("data-groupid");
-		var groupname = $(this).parent().attr("data-groupname");
+		var index = $(this).parent().index();
+		var groupid = data["groups"][index]["id"];
+		var groupname = data["groups"][index]["name"];
 		localStorage.setItem("groupid", groupid);
 		localStorage.setItem("groupname", groupname);
 		location.href = "balances.html";
 	});
 
-	// TODO: change to $(this).index() in order to find group
 	$("body").on("click", "[name='deletebutton']", function(e) {
-		var groupname = $(this).parent().parent().attr("data-groupname");
-		var groupid = $(this).parent().parent().attr("data-groupid");
+		var index = $(this).parent().parent().index();
+		console.log(index);
+		var groupid = data["groups"][index]["id"];
+		var groupname = data["groups"][index]["name"];
 		$("#confirmmessage").attr("data-groupid", groupid);
 		$("#confirmmessage").html("Are you sure you want to leave the group '" + groupname + "'?");
 		$("#deletedialog").modal("show");
@@ -172,8 +181,9 @@
 
 	// TODO: change to $(this).index() in order to find group
 	$("body").on("click", "[name='addmemberbutton']", function(e) {
-		var groupname = $(this).parent().parent().attr("data-groupname");
-		var groupid = $(this).parent().parent().attr("data-groupid");
+		var index = $(this).parent().parent().index();
+		var groupid = data["groups"][index]["id"];
+		var groupname = data["groups"][index]["name"];
         $("#addmessage").html("Add user to the group '" + groupname + "' with email address")
 		$("#addmemberdialog").modal("show");
 	});
@@ -182,4 +192,5 @@
 
 </script>
 
+</body>
 </html>
