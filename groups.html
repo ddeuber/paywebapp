@@ -37,6 +37,10 @@
   <ul class="list-group" id="list">
   </ul>
 
+    <br>
+	<div class="alert alert-success" role="alert" id="addmemberalert" style="display:none">
+	</div>
+
 	<div class="modal" tabindex="-1" role="dialog" id="createdialog">
 	  <div class="modal-dialog modal-dialog-centered" role="document">
 	    <div class="modal-content">
@@ -88,8 +92,10 @@
 		</button>
         </div>
 	      <div class="modal-body">
-              <p id="addmessage"></p> 
-		      <input class="form-control" type="email" id="newmemberemail" placeholder="Email" required>
+			  <p id="addmessage"></p> 
+			  <input class="form-control" type="email" id="newmemberemail" placeholder="Email" required>
+			  <p class="text-danger" id="invalidemailmessage"></p> 
+		  </div>
 	      <div class="modal-footer">
 		<button type="submit" class="btn btn-primary" id="addmember">Add</button>
 		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -102,12 +108,18 @@
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
+<!-- Utility functions -->
+<script src="connection.js"></script>
 
 <script>
 	$("#nav-placeholder").load("nav.html");
 
-    var data = {"groups": [{"id" : 1, "name": "testtest"}, {"id": 2, "name": "test2"}]};
-    updateList(data);
+	var groups;
+	var setGroups = function(data) {
+		groups = data["groups"];
+		updateList(groups);
+	}
+	sendRequest("groups", "GET", {}, setGroups, standardErrorAlert);
 
 	function listItem(name) {
 		var nameentry = $("<p>");
@@ -148,9 +160,8 @@
 		return row; 
 	}
 
-	function updateList(data){
+	function updateList(groups){
 		$(".list-group-item").remove();
-		var groups = Object.values(data["groups"]);
 		var name;
 		var groupid;
 		for (var i in groups) {
@@ -162,32 +173,88 @@
 
 	$("body").on("click", "[name='grouptext']", function() {
 		var index = $(this).parent().index();
-		var groupid = data["groups"][index]["id"];
-		var groupname = data["groups"][index]["name"];
+		var groupid = groups[index]["id"];
+		var groupname = groups[index]["name"];
 		localStorage.setItem("groupid", groupid);
 		localStorage.setItem("groupname", groupname);
 		location.href = "balances.html";
 	});
 
+	$("#creategroup").on("click", function(e){
+		var groupname = $("#groupname").val();
+		onSuccess = function(data) {
+			$("#createdialog").modal("hide");
+			$("#groupname").val("");
+			var groupid = data["id"];
+			groups.push({"id": groupid, "name": groupname});
+			$("#list").append(listItem(groupname));
+		}
+		sendRequest("addgroup", "POST", {"name": groupname}, onSuccess, standardErrorAlert);
+	});
+
 	$("body").on("click", "[name='deletebutton']", function(e) {
 		var index = $(this).parent().parent().index();
-		console.log(index);
-		var groupid = data["groups"][index]["id"];
-		var groupname = data["groups"][index]["name"];
+		var groupid = groups[index]["id"];
+		var groupname = groups[index]["name"];
 		$("#confirmmessage").attr("data-groupid", groupid);
 		$("#confirmmessage").html("Are you sure you want to leave the group '" + groupname + "'?");
+		$("#deletegroup").attr("data-groupid", groupid);
+		$("#deletegroup").attr("data-groupindex", index);
 		$("#deletedialog").modal("show");
 	});
 
-	// TODO: change to $(this).index() in order to find group
+	$("#deletegroup").on("click", function(e){
+		var groupid = $(this).attr("data-groupid");
+		var groupindex = $(this).attr("data-groupindex");
+		onSuccess = function(data) {
+			$("#deletedialog").modal("hide");
+			groups.splice(groupindex, 1);
+			updateList(groups);	
+		}
+		sendRequest("leavegroup/" + groupid, "POST", {}, onSuccess, standardErrorAlert);
+	});
+
 	$("body").on("click", "[name='addmemberbutton']", function(e) {
 		var index = $(this).parent().parent().index();
-		var groupid = data["groups"][index]["id"];
-		var groupname = data["groups"][index]["name"];
-        $("#addmessage").html("Add user to the group '" + groupname + "' with email address")
+		var groupid = groups[index]["id"];
+		var groupname = groups[index]["name"];
+		$("#invalidemailmessage").text("");
+		$("#newmemberemail").val("");
+		$("#addmessage").html("Add user to the group '" + groupname + "' with email address")
+		$("#addmember").attr("data-groupid", groupid);
+		$("#addmember").attr("data-groupname", groupname);
 		$("#addmemberdialog").modal("show");
 	});
 
+	$("#addmember").on("click", function(e){
+		var groupid = $(this).attr("data-groupid");
+		var groupname = $(this).attr("data-groupname");
+		var email = $("#newmemberemail").val();
+		onSuccess = function(data) {
+			$("#addmemberdialog").modal("hide");
+			$("#addmemberalert").text("Successfully added user with email '" + email + "' to group '" + groupname + "'");
+			$("#addmemberalert").show();
+			alertTimeout();
+		}
+		onError = function(response, error) {
+			if (response["status"]==400){
+				$("#invalidemailmessage").text(response["responseJSON"]["message"]);
+				$("#invalidemailmessage").prepend("<br>");
+			} else {
+				standardErrorAlert(response, error);
+			}
+		}
+		sendRequest("addusertogroup/" + groupid, "POST", {"email": email}, onSuccess, onError);
+	});
+	
+	function alertTimeout() {
+		setTimeout(function () {
+				if ($(".alert").is(":visible")){
+				$(".alert").fadeOut("fast");
+				}
+			}, 5000);
+	}
+	
 
 
 </script>

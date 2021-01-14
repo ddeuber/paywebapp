@@ -15,13 +15,14 @@
 
   <script>
     try{ 
-      localStorage.clear();
+    localStorage.removeItem("email");
     } finally {
-      try{
-      } finally {
-        sessionStorage.clear();
-      }
-    }
+    try{
+    localStorage.removeItem("access_token");
+    } finally {
+    try{
+    localStorage.removeItem("refresh_token");
+    } finally{}}}
   </script>
 
 </head>
@@ -51,7 +52,7 @@
     <br>
     <br>
     <br>
-    <p>You have been logged out.</p>
+    <p>Your session has expired. You need to <a href="login.html">log in</a>.</p>
   </div>
 
 

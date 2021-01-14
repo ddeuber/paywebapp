@@ -59,7 +59,7 @@
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 <!-- Utility functions -->
-<script src="host.js"></script>
+<script src="connection.js"></script>
 
 <script>
   $("#nav-placeholder").load("nav.html");
@@ -81,8 +81,8 @@
           }),
           dataType: "json",
           success : function(data) {              
-            localStorage.setItem("refresh_token", data["refresh_token"]);
-            sessionStorage.setItem("access_token", data["access_token"]);
+            setRefreshToken(data["refresh_token"]);
+            setAccessToken(data["access_token"]);
             localStorage.setItem("email", email);
             location.href = "groups.html";
           },
