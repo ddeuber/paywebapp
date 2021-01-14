@@ -53,6 +53,8 @@
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
+<!-- Utility functions -->
+<script src="connection.js"></script>
 
 <script>
   $("#nav-placeholder").load("nav.html");
@@ -62,8 +64,39 @@
   });
 
   $("#submitchange").on("click", function (e) {
-    var email = localStorage.getItem("email");
+    if ($(this).parent()[0].checkValidity()){
+      var oldPassword = $("#inputoldpassword").val();
+      var newPassword = $("#inputnewpassword").val();
+      var email = localStorage.getItem("email");
 
+      onSuccess = function(response) {
+        $("#erroralert").hide();
+        $("#successalert").show();
+      }
+
+      $.ajax({
+          url : getHost() + "login",
+          type : "POST",
+          data : JSON.stringify({
+              "email": email,
+              "password": oldPassword
+          }),
+          dataType: "json",
+          success : function(data) {              
+              var token = data["access_token"];
+              sendAuthenticatedRequest("resetpassword", "POST", {"password": newPassword}, onSuccess, standardErrorAlert, token);
+          },
+          error : function(response, error) {
+              if (response["status"]==401){
+                $("#successalert").hide();
+                $("#erroralert").show();              
+              } else {
+                alert("Something went wrong. Try again now or at a later time.");
+              }
+          }
+      });
+
+    }
   });
 
 </script>

@@ -39,7 +39,7 @@
       </div>
       <div class="form-group">
         <label for="inputpmount">Amount</label>
-        <input type="number" step="0.05" class="form-control" id="inputpmount" placeholder="Enter Amount" required>
+        <input type="number" step="0.05" class="form-control" id="inputamount" placeholder="Enter Amount" required>
       </div>
       <div class="form-group">
         <label for="inputpayer">Payer</label>
@@ -71,7 +71,7 @@
         <div class="modal-body">
           <p id="namemessage">Enter the name of the new participant</p>
           <input class="form-control" type="text" id="newparticipantname" placeholder="Name" required>
-          <p id="errormessage" class="text-danger">Participant already exists. Please choose another name.</p>
+          <p id="errormessage" class="text-danger"></p>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary" id="addparticipantbutton">Add</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -106,18 +106,26 @@
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 
+<!-- Utility functions -->
+<script src="connection.js"></script>
+
 <script>
   $("#nav-placeholder").load("nav.html");
 
-  var participants = ["Toni", "Mä", "Adrian"];
-  updateParticipants();
+  var groupid = localStorage.getItem("groupid");
+  var participants;
+  var setParticipants = function(data) {
+    participants = data["participants"];
+    updateParticipants();
 
-  // Set payer to last known payer
-  var lastPayer = localStorage.getItem("lastPayer");
-  var index = participants.indexOf(lastPayer);
-  if (index > -1){
-    $("select").children().eq(index).attr("selected", true);
+    var lastPayer = localStorage.getItem("lastPayer");
+    var index = participants.indexOf(lastPayer);
+    if (index > -1){
+      $("select").children().eq(index).attr("selected", true);
+    }
   }
+  sendRequest("participants/" + groupid, "GET", {}, setParticipants, standardErrorAlert);
+
 
   function optionTag(participant) {
     var option = $("<option>");
@@ -163,14 +171,17 @@
   }
 
   $("#addparticipant").on("click", function (e) {
-    $("#errormessage").hide();
+    $("#errormessage").text("");
+    $("#newparticipantname").val("");
     $("#addparticipantdialog").modal("show");
   });
 
   $("#addparticipantbutton").on("click", function (e) {
-    var newParticipant = $("#newparticipantname").val();;
+    var newParticipant = $("#newparticipantname").val();
     if (participants.indexOf(newParticipant) > -1) {
-      $("#errormessage").show();
+      $("#errormessage").text("Participant already exists. Please choose another name.")
+    } else if (newParticipant=="") {
+      $("#errormessage").text("Please choose a name.");
     } else {
       participants.push(newParticipant);
       updateParticipants(participants);
@@ -189,8 +200,18 @@
       $("#noparticipantdialog").modal("show");
       return;
     }
-    localStorage.setItem("lastPayer", $("#inputpayer option:selected").text());
+    var payer = $("#inputpayer option:selected").text();
+    localStorage.setItem("lastPayer", payer);
 
+    var amount = $("#inputamount").val();
+    var title = $("#inputtitle").val();
+    transaction = {"payer": payer, "involved": selectedParticipants, "amount": amount, "comment": title, "timestamp": Date.now()};
+    onSuccess = function(data) {
+      location.href = "balances.html";
+    }
+    sendRequest("addtransaction/" + groupid, "POST", transaction, onSuccess, standardErrorAlert);
+
+    //TODO: save last participants
   });
 
 

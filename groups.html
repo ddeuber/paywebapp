@@ -239,7 +239,6 @@
 		onError = function(response, error) {
 			if (response["status"]==400){
 				$("#invalidemailmessage").text(response["responseJSON"]["message"]);
-				$("#invalidemailmessage").prepend("<br>");
 			} else {
 				standardErrorAlert(response, error);
 			}

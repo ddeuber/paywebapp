@@ -53,15 +53,21 @@
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
+<!-- Utility functions -->
+<script src="connection.js"></script>
 
 <script>
   $("#nav-placeholder").load("nav.html");
-  $("h3").text(localStorage.getItem("groupname"))
+  $("h3").text(localStorage.getItem("groupname"));
 
-  console.log(localStorage.getItem("groupid"))
+  var debts = {};
 
-  var data = {'Toni': {'spent': 10, 'owes': 20, 'credit':-10}, 'Mä': {'spent': 20, 'owes': 40, 'credit':20}};
-  updateTable(data);
+  var groupid = localStorage.getItem("groupid");
+  onSuccess = function(data) {
+    debts = data;
+    initTable(debts);
+  }
+  sendRequest("debts/" + groupid, "GET", {}, onSuccess, standardErrorAlert);
 
 	function tableRow(name, spent, owes, credit) {
     var row = $("<tr>", {"style": "cursor:pointer;"});
@@ -84,7 +90,7 @@
 		return row;
 	}
 
-	function updateTable(data){
+	function initTable(data){
 		for (var participant in data) {
       balance = data[participant];
 			$("#tablebody").append(tableRow(participant, balance['spent'], balance['owes'], balance['credit'])); 
@@ -93,8 +99,8 @@
 
 	$("body").on("click", "tr", function(e){
     var index = $(this).index();
-    keys = Object.keys(data);
-    sessionStorage.setItem("participant", keys[index]);
+    keys = Object.keys(debts);
+    localStorage.setItem("participant", keys[index]);
     location.href = "viewtransactions.html";
   });
   
@@ -103,7 +109,7 @@
   });
   
   $("#viewtransactions").on("click", function(e){
-    sessionStorage.removeItem("participant");
+    localStorage.removeItem("participant");
     location.href = "viewtransactions.html";
   });
 

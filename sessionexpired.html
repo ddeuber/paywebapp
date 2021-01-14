@@ -8,22 +8,10 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>PayApp - Logout</title>
+  <title>PayApp - Session Expired</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-  <script>
-    try{ 
-    localStorage.removeItem("email");
-    } finally {
-    try{
-    localStorage.removeItem("access_token");
-    } finally {
-    try{
-    localStorage.removeItem("refresh_token");
-    } finally{}}}
-  </script>
 
 </head>
 

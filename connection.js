@@ -68,6 +68,7 @@ function sendAuthenticatedRequest(endpoint, requestType, jsonData, onSuccess, on
         type : requestType,
         data : JSON.stringify(jsonData),
         dataType: "json",
+        contentType: "application/json",
         success : onSuccess,
         error : onError,
 		beforeSend: function(xhr) {
@@ -87,5 +88,5 @@ function sendRequest(endpoint, requestType, jsonData, onSuccess, onError){
 
 
 function standardErrorAlert(response, error) {
-    alert("Something went wrong. Try again now or at a later time.");
+    alert("Something went wrong.");
 }

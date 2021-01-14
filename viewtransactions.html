@@ -56,25 +56,54 @@
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 
+<!-- Utility functions -->
+<script src="connection.js"></script>
+
 <script>
   $("#nav-placeholder").load("nav.html");
 
-  var participantName = sessionStorage.getItem("participant");
+  var filter = {"limit": 20, "offset": 0};
+
+  var participantName = localStorage.getItem("participant");
   if (participantName !== null){
     $("#btnlabel1").append("Paid by " + participantName);
     $("#btnlabel2").append(participantName + " involved");
+    filter["payer"] = participantName;
   } else {
     $(".btn-group").remove();
   }
 
-  var data = [{"payer": "<b>Mä</b>", "comment": "coop und voi blablalb", "amount":30, "timestamp": 1604346680629, "involved": ["Toni", "Mä"]}, {"payer": "Mä", "amount": 40, "comment": "fleisch", "timestamp": 1604346680629, "involved": ["Toni", "Adrian"]}];
-  updateTable(data);
+  var groupid = localStorage.getItem("groupid");
+  var transactions;
+  var allTransactionsLoaded;
+  
+  initializeTransactions = function(data){
+    transactions = data;
+    $('[name="tablerow"]').remove();
+    updateTable(transactions);
+  }
+  function update() {
+    filter["offset"] = 0;
+    allTransactionsLoaded = false;
+    sendRequest("transactions/" + groupid, "POST", filter, initializeTransactions, standardErrorAlert);
+  }
+  update();
+
+  appendTransactions = function(data){
+    if (data.length == 0){
+      allTransactionsLoaded = true;
+    } else {
+      transactions = transactions.concat(data);
+      updateTable(data);
+    }
+  }
+  function showMoreTransactions() {
+    filter["offset"] += filter["limit"];
+    sendRequest("transactions/" + groupid, "POST", filter, appendTransactions, standardErrorAlert);
+  }
+
 
 	function tableRow(name, comment, amount) {
-    var htmlText = `<tr style="cursor:pointer;"><td>` + name;
-    var cellTag= `</td><td>`;
-    var rowEnd = `</td></tr>`;
-
     var nameentry = $("<td>");
     nameentry.text(name);
     var amountentry = $("<td>");
@@ -84,6 +113,7 @@
     
     var row = $("<tr>");
     row.attr("style", "cursor:pointer;");
+    row.attr("name", "tablerow");
     row.append(nameentry);
     row.append(amountentry);
     row.append(titleentry);
@@ -91,23 +121,15 @@
 		return row;
 	}
 
-	function updateTable(){
-		for (var i=0; i<data.length; ++i) {
-			$("#tablebody").append(tableRow(data[i]["payer"], data[i]["comment"], data[i]["amount"]));
+	function updateTable(transactions){
+		for (var transaction of transactions) {
+			$("#tablebody").append(tableRow(transaction["payer"], transaction["comment"], transaction["amount"]));
 		}
 	}
 
-	$("body").on("click", "[name='deletebutton']", function(e) {
-		var groupname = $(this).parent().parent().attr("data-groupname");
-		var groupid = $(this).parent().parent().attr("data-groupid");
-		$("#confirmmessage").attr("data-groupid", groupid);
-		$("#confirmmessage").html("are you sure you want to leave the group '" + groupname + "'?");
-		$("#deletedialog").modal("show");
-	});
-
 	$("body").on("click", "tr", function(e) {
     var index = $(this).index(); 
-    sessionStorage.setItem("transaction", JSON.stringify(data[index]));
+    localStorage.setItem("transaction", JSON.stringify(transactions[index]));
     location.href = "transactiondetails.html"
   });
   
@@ -116,11 +138,29 @@
   });
 
   $("#btncheck1").on("click", function(e){
-    console.log($(this).prop("checked"));
+    var checked = $(this).prop("checked");
+    if (checked) {
+      filter["payer"] = participantName;
+    } else {
+      delete filter["payer"];
+    }
+    update();
   });
 
   $("#btncheck2").on("click", function(e){
+    var checked = $(this).prop("checked");
+    if (checked) {
+      filter["participant"] = participantName;
+    } else {
+      delete filter["participant"];
+    }
+    update();
+  });
 
+  $(window).scroll(function(e) {
+    if ((window.innerHeight + window.pageYOffset) >= document.body.offsetHeight && !allTransactionsLoaded) {
+      showMoreTransactions();
+    }
   });
 
 </script>
