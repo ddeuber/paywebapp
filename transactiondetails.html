@@ -45,9 +45,9 @@
     </div>
     <div class="row mt-1">
       <div class="col-4 font-weight-bold">
-        Payer:
+        Creator:
       </div>
-      <div class="col-8" id="transactionpayer">
+      <div class="col-8" id="transactioncreator">
       </div>
     </div>
     <div class="row mt-1">
@@ -62,6 +62,13 @@
         Creation time:
       </div>
       <div class="col-8" id="transactioncreationtime">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-4 font-weight-bold">
+        Payer:
+      </div>
+      <div class="col-8" id="transactionpayer">
       </div>
     </div>
     <div class="row mt-1">
@@ -84,10 +91,11 @@
 <script>
   $("#nav-placeholder").load("nav.html");
 
-  var transaction = JSON.parse(sessionStorage.getItem("transaction"));
+  var transaction = JSON.parse(localStorage.getItem("transaction"));
   $("#transactiontitle").text(transaction["comment"]);
   $("#transactionamount").text(transaction["amount"].toFixed(2));
   $("#transactionpayer").text(transaction["payer"]);
+  $("#transactioncreator").text(transaction["creator"]);
   var creationTimestamp = transaction["timestamp"];
   var date = new Date(creationTimestamp);
   $("#transactioncreationdate").text(date.toLocaleDateString("de-CH"));
