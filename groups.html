@@ -126,7 +126,7 @@
 		nameentry.attr("class", "p-2 m-0 flex-grow-1");
 		nameentry.text(name);
 		var namecol = $("<div>");
-		namecol.attr("class", "col-10 col-sm-10");
+		namecol.attr("class", "col-10");
 		namecol.attr("name", "grouptext");
 		namecol.append(nameentry);
 
@@ -137,7 +137,7 @@
 		addbutton.attr("name", "addmemberbutton");
 		addbutton.append(addicon);
 		var addcol = $("<div>"); 
-		addcol.attr("class", "col-1");
+		addcol.attr("class", "col-auto");
 		addcol.append(addbutton);
 
 		var deleteicon = $("<i>");
@@ -147,11 +147,11 @@
 		deletebutton.attr("name", "deletebutton");
 		deletebutton.append(deleteicon);
 		var deletecol = $("<div>"); 
-		deletecol.attr("class", "col-1");
+		deletecol.attr("class", "col-auto");
 		deletecol.append(deletebutton);
         
 		var row = $("<li>");
-		row.attr("class", "list-group-item d-flex justify-content-center py-1");
+		row.attr("class", "list-group-item d-flex justify-content-center py-1 no-gutters");
 		row.attr("style", "cursor:pointer");
 		row.append(namecol);
 		row.append(addcol);
