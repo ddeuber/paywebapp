@@ -123,6 +123,20 @@
     if (index > -1){
       $("select").children().eq(index).attr("selected", true);
     }
+
+    // add values from URL query (eg reverse transaction)
+    uriParams = new URLSearchParams(window.location.search);
+    document.getElementById("inputtitle").value = uriParams.get("title");
+    document.getElementById("inputamount").value = 0 - uriParams.get("amount");
+    document.getElementById("inputpayer").value = uriParams.get("payer");
+    for (var uriParticipant of uriParams.get("involved").split(",")) {
+      for (var existingParticipant of participants) {
+          if (uriParticipant === existingParticipant) {
+              document.getElementById("involved-checkbox-" + existingParticipant).checked = true;
+          }
+      }
+    }
+
   }
   sendRequest("participants/" + groupid, "GET", {}, setParticipants, standardErrorAlert);
 
@@ -143,6 +157,7 @@
     var checkbox = $("<input>");
     checkbox.attr("type", "checkbox");
     checkbox.attr("class", "form-check-input");
+    checkbox.attr("id", "involved-checkbox-" + participant);
 
     label.text(participant);
     label.prepend(checkbox);

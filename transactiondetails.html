@@ -81,6 +81,9 @@
   </div>
 
 
+  <div>
+  <a id="reversebutton" href="/addtransaction.html?">Create reverse transaction</a>
+  </div>
   </div>
 
   <!-- Bootstrap core JavaScript -->
@@ -105,6 +108,22 @@
     listitem.text(involved);
     $("#transactioninvolved").append(listitem);
   }
+
+  // TODO: use a library for the uri query
+  // maybe that would also solve the comma in participant name issue
+  reverseHref = document.getElementById("reversebutton").href;
+  reverseHref += "title=REVERSE TRASNACTION:%20" + transaction["comment"];
+  reverseHref += "&amount=" + transaction["amount"];
+  reverseHref += "&payer=" + transaction["payer"];
+  reverseHref += "&involved=";
+  for (var involved of transaction["involved"]){
+    if (reverseHref[reverseHref.length - 1] != ",") {
+      reverseHref += ",";
+    }
+    reverseHref += involved
+  }
+  document.getElementById("reversebutton").href = reverseHref;
+
 
 </script>
 
