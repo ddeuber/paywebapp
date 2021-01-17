@@ -109,20 +109,15 @@
     $("#transactioninvolved").append(listitem);
   }
 
-  // TODO: use a library for the uri query
-  // maybe that would also solve the comma in participant name issue
-  reverseHref = document.getElementById("reversebutton").href;
-  reverseHref += "title=REVERSE TRASNACTION:%20" + transaction["comment"];
-  reverseHref += "&amount=" + transaction["amount"];
-  reverseHref += "&payer=" + transaction["payer"];
-  reverseHref += "&involved=";
-  for (var involved of transaction["involved"]){
-    if (reverseHref[reverseHref.length - 1] != ",") {
-      reverseHref += ",";
-    }
-    reverseHref += involved
+  // set reversebutton
+  uriParams = new URLSearchParams();
+  uriParams.append("title", "REVERSE TRASNACTION: " + transaction["comment"]);
+  uriParams.append("amount", 0 - transaction["amount"]);
+  uriParams.append("payer", transaction["payer"]);
+  for (var i = 0; i < transaction["involved"].length; ++i) {
+      uriParams.append("involved" + i, transaction["involved"][i]);
   }
-  document.getElementById("reversebutton").href = reverseHref;
+  document.getElementById("reversebutton").href += uriParams.toString();
 
 
 </script>

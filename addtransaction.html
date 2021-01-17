@@ -127,14 +127,17 @@
     // add values from URL query (eg reverse transaction)
     uriParams = new URLSearchParams(window.location.search);
     document.getElementById("inputtitle").value = uriParams.get("title");
-    document.getElementById("inputamount").value = 0 - uriParams.get("amount");
+    document.getElementById("inputamount").value = uriParams.get("amount");
     document.getElementById("inputpayer").value = uriParams.get("payer");
-    for (var uriParticipant of uriParams.get("involved").split(",")) {
+    var i = 0;
+    // the while condition sets uriParticipant and checks if it's not null #beaut
+    while (uriParticipant = uriParams.get("involved" + i)) {
       for (var existingParticipant of participants) {
           if (uriParticipant === existingParticipant) {
               document.getElementById("involved-checkbox-" + existingParticipant).checked = true;
           }
       }
+      ++i;
     }
 
   }
