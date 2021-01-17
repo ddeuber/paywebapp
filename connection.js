@@ -73,7 +73,8 @@ function sendAuthenticatedRequest(endpoint, requestType, jsonData, onSuccess, on
         error : onError,
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader("Authorization", "Bearer " + token);
-		},
+        },
+        cached: false
     });
 }
 

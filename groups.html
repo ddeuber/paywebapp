@@ -16,6 +16,13 @@
   <!-- Use Fontawesome for icons -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
+<!-- Utility functions -->
+<script src="connection.js"></script>
+
+<script>
+	// check if valid refresh token is available, otherwise goes to login
+	getRefreshToken();
+</script>
 
 </head>
 
@@ -108,8 +115,6 @@
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-<!-- Utility functions -->
-<script src="connection.js"></script>
 
 <script>
 	$("#nav-placeholder").load("nav.html");
