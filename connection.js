@@ -71,7 +71,13 @@ function sendAuthenticatedRequest(endpoint, requestType, jsonData, onSuccess, on
         dataType: "json",
         contentType: "application/json",
         success : onSuccess,
-        error : onError,
+        error : function(response, error) {
+            if (response["status"]==500) {
+                onError(response, error)
+            } else {
+                authorizationErrorAlert(response, error);
+            }
+        },
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader("Authorization", "Bearer " + token);
         },
@@ -91,4 +97,11 @@ function sendRequest(endpoint, requestType, jsonData, onSuccess, onError){
 
 function standardErrorAlert(response, error) {
     alert("Something went wrong.");
+}
+
+function authorizationErrorAlert(response, error) {
+    localStorage.clear();
+    sessionStorage.clear();
+    alert("Something went wrong. Try logging in again.");
+    location.href = "login.html";
 }
