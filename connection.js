@@ -1,7 +1,8 @@
 function getHost(){
     var urlparts = window.location.href.split('/');
     var host = urlparts[0] + '//' + urlparts[2] + '/api/';
-    host = host.replace("8000", "5000");
+    // The following line is only needed for local testing
+    host = host.replace("8000/api", "5000");
     return host;
 }
 
