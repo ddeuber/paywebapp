@@ -80,10 +80,10 @@
     for (var b of balances){
       entry = $("<td>");
       if (b >=0)
-        entry.attr("class", "text-success");
+        entry.attr("class", "text-success text-right");
       else
-        entry.attr("class", "text-danger");
-      entry.text(b);
+        entry.attr("class", "text-danger text-right");
+      entry.text(b.toFixed(2));
       row.append(entry);
     }
 
