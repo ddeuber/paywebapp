@@ -39,9 +39,9 @@
     <thead class="thead-light">
       <tr>
         <th>Name</th>
-        <th class="text-center">Spent</th>
-        <th class="text-center">Owes</th>
-        <th class="text-center">Credit</th>
+        <th class="text-right">Spent</th>
+        <th class="text-right">Owes</th>
+        <th class="text-right">Credit</th>
       </tr>
     </thead>
     <tbody id="tablebody">
@@ -80,9 +80,9 @@
     for (var b of balances){
       entry = $("<td>");
       if (b >=0)
-        entry.attr("class", "text-success text-center");
+        entry.attr("class", "text-success text-right");
       else
-        entry.attr("class", "text-danger text-center");
+        entry.attr("class", "text-danger text-right");
       entry.text(b.toFixed(2));
       row.append(entry);
     }
