@@ -21,6 +21,9 @@
   <!-- Navigation -->
   <div id="nav-placeholder"></div>
 
+  <!-- Use Fontawesome for icons -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+    integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
   <!-- Page Content# -->
   <div class="container" style="max-width: 800px;">
@@ -44,7 +47,23 @@
         <th class="text-right">Credit</th>
       </tr>
     </thead>
-    <tbody id="tablebody">
+    <tbody id="balancesTableBody">
+  </table>
+
+  <h5 style="float: left">Standing Orders</h5>
+  &nbsp;
+  <i class="fas fa-plus-circle" style="cursor:pointer" id="addStandingOrder"></i>
+  <br>
+  <table class="table table-hover">
+    <thead class="thead-light">
+      <tr>
+        <th>Payer</th>
+        <th class="text-center">Amount</th>
+        <th>Title</th>
+        <th>Next Execution</th>
+      </tr>
+    </thead>
+    <tbody id="standingOrdersTableBody">
   </table>
 
   </div>
@@ -60,16 +79,23 @@
   $("#nav-placeholder").load("nav.html");
   $("h3").text(localStorage.getItem("groupname"));
 
-  var debts = {};
-
   var groupid = localStorage.getItem("groupid");
-  onSuccess = function(data) {
-    debts = data;
-    initTable(debts);
-  }
-  sendRequest("debts/" + groupid, "GET", {}, onSuccess, standardErrorAlert);
 
-	function tableRow(name, spent, owes, credit) {
+  var debts = {};
+  onSuccessDebts = function(data) {
+    debts = data;
+    initBalancesTable(debts);
+  }
+  sendRequest("debts/" + groupid, "GET", {}, onSuccessDebts, standardErrorAlert);
+
+  var standingOrders = {};
+  onSuccessStandingOrders = function(data) {
+    standingOrders = data;
+    initStandingOrdersTable(standingOrders);
+  }
+  sendRequest("standingorders/" + groupid, "GET", {}, onSuccessStandingOrders, standardErrorAlert);
+
+	function balanceTableRow(name, spent, owes, credit) {
     var row = $("<tr>", {"style": "cursor:pointer;"});
     row.attr("style", "cursor:pointer;");
     var entry = $("<td>");
@@ -90,18 +116,53 @@
 		return row;
 	}
 
-	function initTable(data){
-		for (var participant in data) {
+	function initBalancesTable(data){
+		for (var participant in data){
       balance = data[participant];
-			$("#tablebody").append(tableRow(participant, balance['spent'], balance['owes'], balance['credit'])); 
+			$("#balancesTableBody").append(balanceTableRow(participant, balance['spent'], balance['owes'], balance['credit'])); 
 		}
-	}
+  }
 
-	$("body").on("click", "tr", function(e){
+	function standingOrderTableRow(name, comment, amount, nextExecution) {
+    var nameentry = $("<td>");
+    nameentry.text(name);
+    var amountentry = $("<td>");
+    amountentry.text(amount.toFixed(2));
+    amountentry.attr("class", "text-center");
+    var titleentry = $("<td>");
+    titleentry.text(comment);
+    var nextexecution = $("<td>");
+    nextexecution.text(nextExecution);
+    
+    var row = $("<tr>");
+    row.attr("style", "cursor:pointer;");
+    row.attr("name", "tablerow");
+    row.append(nameentry);
+    row.append(amountentry);
+    row.append(titleentry);
+    row.append(nextexecution);
+    
+		return row;
+	}
+  
+  function initStandingOrdersTable(data){
+    for (var standingOrder of data){
+      $("#standingOrdersTableBody").append(standingOrderTableRow(standingOrder['payer'], standingOrder['comment'], standingOrder['amount'], 
+        new Date(standingOrder['next_executions'][0]).toLocaleDateString("de-CH")));
+    }
+  }
+
+	$("body").on("click", "#balancesTableBody tr", function(e){
     var index = $(this).index();
     keys = Object.keys(debts);
     localStorage.setItem("participant", keys[index]);
     location.href = "viewtransactions.html";
+  });
+
+	$("body").on("click", "#standingOrdersTableBody tr", function(e){
+    var index = $(this).index();
+    localStorage.setItem("standingOrder", JSON.stringify(standingOrders[index]));
+    location.href = "standingorderdetails.html";
   });
   
   $("#addtransaction").on("click", function(e){
@@ -113,6 +174,9 @@
     location.href = "viewtransactions.html";
   });
 
+  $("#addStandingOrder").on("click", function(e){
+    location.href = "addstandingorder.html";
+  });
 
 </script>
 

@@ -8,7 +8,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>PayApp - Add Transaction</title>
+  <title>PayApp - Add Standing Order</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -30,7 +30,7 @@
   <!-- Page Content# -->
   <div class="container" style="max-width: 800px;">
     <br>
-    <h3>New Transaction</h3>
+    <h3>New Standing Order</h3>
     <br>
     <form>
       <div class="form-group">
@@ -40,6 +40,18 @@
       <div class="form-group">
         <label for="inputamount">Amount</label>
         <input type="number" step="0.05" class="form-control" id="inputamount" placeholder="Enter Amount" required>
+      </div>
+      <div class="form-group">
+        <label for="inputPeriodicity">Periodicity</label>
+        <select id="inputPeriodicity" class="form-control">
+          <option value="monthly">monthly</option>
+          <option value="quarterly">quarterly</option>
+          <option value="yearly">yearly</option>
+        </select> 
+      </div>
+      <div id="executionDayDiv" class="form-group">
+        <label for="inputExecutionDay">Execution Day (if empty the last day of the month is selected)</label>
+        <input type="number" min=1 max=28 step=1 class="form-control" id="inputExecutionDay">
       </div>
       <div class="form-group">
         <label for="inputpayer">Payer</label>
@@ -171,7 +183,7 @@
 
   function updateParticipants() {
     $(".list-group-item").remove()
-    $("option").remove()
+    $("#inputpayer option").remove()
     for (var p of participants) {
       $("#inputpayer").append(optionTag(p));
       $("#participantlist").append(listItem(p));
@@ -207,6 +219,14 @@
     }
   });
 
+  $("#inputPeriodicity").on("change", function (e) {
+    if ($('#inputPeriodicity').val() == "monthly") {
+      $('#executionDayDiv').show();
+    } else {
+      $('#executionDayDiv').hide();
+    }
+  });
+
   $("form").on("submit", function (e) {
     e.preventDefault();
   });
@@ -221,13 +241,20 @@
     var payer = $("#inputpayer option:selected").text();
     localStorage.setItem("lastPayer", payer);
 
+    var periodicity = $("#inputPeriodicity").val();
+
+    var executionDay = null;
+    if (periodicity == "monthly") {
+      executionDay = $("#inputExecutionDay").val();
+    }
+
     var amount = $("#inputamount").val();
     var title = $("#inputtitle").val();
-    transaction = {"payer": payer, "involved": selectedParticipants, "amount": amount, "comment": title, "timestamp": Date.now()};
+    standingOrder = {"payer": payer, "involved": selectedParticipants, "amount": amount, "comment": title, "periodicity": periodicity, "day" : parseInt(executionDay)};
     onSuccess = function(data) {
       location.href = "balances.html";
     }
-    sendRequest("addtransaction/" + groupid, "POST", transaction, onSuccess, standardErrorAlert);
+    sendRequest("standingorders/" + groupid, "POST", standingOrder, onSuccess, standardErrorAlert);
 
     //TODO: save last participants
   });

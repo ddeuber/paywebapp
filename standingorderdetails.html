@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>PayApp - Standing Order Info</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <div id="nav-placeholder"></div>
+
+
+  <!-- Page Content# -->
+  <div class="container" style="max-width: 800px;">
+  <br>
+  <h3>Standing Order Info</h3>
+  <br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-5 font-weight-bold">
+        Title:
+      </div>
+      <div class="col-auto" id="standingOrderTitle">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-5 font-weight-bold">
+        Amount:
+      </div>
+      <div class="col-auto" id="standingOrderAmount">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-5 font-weight-bold">
+        Creator:
+      </div>
+      <div class="col-auto" id="standingOrderCreator">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-5 font-weight-bold">
+        Creation date:
+      </div>
+      <div class="col-auto" id="standingOrderCreationDate">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-5 font-weight-bold">
+        Creation time:
+      </div>
+      <div class="col-auto" id="standingOrderCreationTime">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-5 font-weight-bold">
+        Last execution:
+      </div>
+      <div class="col-auto" id="standingOrderLastExecutionDate">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-5 font-weight-bold">
+        Next executions:
+      </div>
+      <div class="col-auto" id="standingOrderNextExecutionDates">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-5 font-weight-bold">
+        Payer:
+      </div>
+      <div class="col-auto" id="standingOrderPayer">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-5 font-weight-bold">
+        Involved:
+      </div>
+        <ul id="standingOrderInvolved">
+        </ul>
+    </div>
+    <br>
+    <button type="button" class="btn btn-primary" id="deleteStandingOrder" style="margin:auto">Delete Standing Order</button>
+  </div>
+
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Utility functions -->
+<script src="connection.js"></script>
+
+<script>
+
+  function toTimeString(timestamp) {
+    if (timestamp != null) {
+      return new Date(timestamp).toLocaleTimeString("de-CH");
+    } else {
+      return null;
+    }
+  }
+
+  function toDateString(timestamp) {
+    if (timestamp != null) {
+      return new Date(timestamp).toLocaleDateString("de-CH");
+    } else {
+      return null;
+    }
+  }
+
+  $("#nav-placeholder").load("nav.html");
+
+  var standingOrder = JSON.parse(localStorage.getItem("standingOrder"));
+  $("#standingOrderTitle").text(standingOrder["comment"]);
+  $("#standingOrderAmount").text(standingOrder["amount"].toFixed(2));
+  $("#standingOrderPayer").text(standingOrder["payer"]);
+  $("#standingOrderCreator").text(standingOrder["creator"]);
+  $("#standingOrderCreationDate").text(toDateString(standingOrder["timestamp"]));
+  $("#standingOrderCreationTime").text(toTimeString(standingOrder["timestamp"]));
+  $("#standingOrderLastExecutionDate").text(toDateString(standingOrder["last_execution_timestamp"]));
+
+  for (var nextExecutionTimestamp of standingOrder["next_executions"]) {
+    $("#standingOrderNextExecutionDates").append(toDateString(nextExecutionTimestamp));
+    $("#standingOrderNextExecutionDates").append($("<br>"));
+  }
+
+  for (var involved of standingOrder["involved"]){
+    var listitem = $("<li>");
+    listitem.text(involved);
+    $("#standingOrderInvolved").append(listitem);
+  }
+
+  $("#deleteStandingOrder").on("click", function(e) {
+    onSuccess = function(data) {
+      location.href = "balances.html";
+    }
+    sendRequest("standingorders/" + localStorage.getItem("groupid") + "/" + standingOrder["id"], "DELETE", {}, onSuccess, standardErrorAlert);
+  })
+
+</script>
+
+</body>
+
+</html>
