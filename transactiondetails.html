@@ -111,7 +111,7 @@
 
   // set reversebutton
   uriParams = new URLSearchParams();
-  uriParams.append("title", "REVERSE TRASNACTION: " + transaction["comment"]);
+  uriParams.append("title", "REVERSE TRANSACTION: " + transaction["comment"]);
   uriParams.append("amount", 0 - transaction["amount"]);
   uriParams.append("payer", transaction["payer"]);
   for (var i = 0; i < transaction["involved"].length; ++i) {

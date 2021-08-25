@@ -100,6 +100,25 @@
       </div>
     </div>
 
+    <div class="modal" tabindex="-2" role="dialog" id="emptypayernamedialog">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Empty Payer Name</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Please make sure you selected a payer</p>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <!-- Bootstrap core JavaScript -->
     <script src="vendor/jquery/jquery.min.js"></script>
@@ -219,6 +238,10 @@
       return;
     }
     var payer = $("#inputpayer option:selected").text();
+    if (payer.length == 0) {
+      $("#emptypayernamedialog").modal("show");
+      return;
+    }
     localStorage.setItem("lastPayer", payer);
 
     var amount = $("#inputamount").val();

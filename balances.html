@@ -96,24 +96,29 @@
   sendRequest("standingorders/" + groupid, "GET", {}, onSuccessStandingOrders, standardErrorAlert);
 
 	function balanceTableRow(name, spent, owes, credit) {
-    var row = $("<tr>", {"style": "cursor:pointer;"});
-    row.attr("style", "cursor:pointer;");
-    var entry = $("<td>");
-    entry.text(name);
-    row.append(entry);
-
-    balances = [spent, owes, credit];
-    for (var b of balances){
-      entry = $("<td>");
-      if (b >=0)
-        entry.attr("class", "text-success text-right");
-      else
-        entry.attr("class", "text-danger text-right");
-      entry.text(b.toFixed(2));
+      var row = $("<tr>", {"style": "cursor:pointer;"});
+      row.attr("style", "cursor:pointer;");
+      var entry = $("<td>");
+      entry.text(name);
       row.append(entry);
-    }
 
-		return row;
+      balances = [spent, owes, credit];
+      for (var i = 0; i < balances.length; i++){
+        entry = $("<td>");
+        b = balances[i]
+        if (i == balances.length - 1) {
+          if (b >=0)
+            entry.attr("class", "text-success text-right");
+          else
+            entry.attr("class", "text-danger text-right");
+        } else {
+          entry.attr("class", "text-right");
+        }
+        entry.text(b.toFixed(2));
+        row.append(entry);
+      }
+
+	  return row;
 	}
 
 	function initBalancesTable(data){
