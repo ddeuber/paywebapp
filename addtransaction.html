@@ -137,12 +137,6 @@
     participants = data["participants"];
     updateParticipants();
 
-    var lastPayer = localStorage.getItem("lastPayer");
-    var index = participants.indexOf(lastPayer);
-    if (index > -1){
-      $("select").children().eq(index).attr("selected", true);
-    }
-
     // add values from URL query (eg reverse transaction)
     uriParams = new URLSearchParams(window.location.search);
     document.getElementById("inputtitle").value = uriParams.get("title");
