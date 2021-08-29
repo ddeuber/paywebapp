@@ -66,6 +66,13 @@
     </div>
     <div class="row mt-1">
       <div class="col-5 font-weight-bold">
+        Periodicity:
+      </div>
+      <div class="col-auto" id="standingOrderPeriodicity">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-5 font-weight-bold">
         Last execution:
       </div>
       <div class="col-auto" id="standingOrderLastExecutionDate">
@@ -131,6 +138,7 @@
   $("#standingOrderCreator").text(standingOrder["creator"]);
   $("#standingOrderCreationDate").text(toDateString(standingOrder["timestamp"]));
   $("#standingOrderCreationTime").text(toTimeString(standingOrder["timestamp"]));
+  $("#standingOrderPeriodicity").text(standingOrder["periodicity"]);
   $("#standingOrderLastExecutionDate").text(toDateString(standingOrder["last_execution_timestamp"]));
 
   for (var nextExecutionTimestamp of standingOrder["next_executions"]) {
